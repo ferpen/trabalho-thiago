@@ -5,7 +5,7 @@ int main (void){
     FILE *arquivo = fopen("palavras.txt","r");
     arvore *arv;
     arv = criaarvore();
-    init(arquivo,arv);
-
+    int x = init(arquivo,arv);
+    printf("%d",x);
     return 0;
 }

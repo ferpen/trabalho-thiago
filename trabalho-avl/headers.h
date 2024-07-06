@@ -250,8 +250,8 @@ int init(FILE *arquivo, arvore *arv){
     if (arquivo != NULL && arv !=NULL){
     //declaração de variáveis locais;
     char a[50],*palavra;
-    int i=0,key=0,letra;
-    short int letras[26],st;
+    int i=0,key=0;
+    short int letras[26]={0},st,letra;
     while((palavra = fgets(a,50,arquivo)) != NULL){  // esse loop le as palavras do arquivo até chegar ao fim dele;
         //reinicia as váriaveis para a proxima palavra;
         for (i=0;i<26;i++){
@@ -263,7 +263,10 @@ int init(FILE *arquivo, arvore *arv){
 
         while (a[i] != '\0'){                       //esse loop cria uma chave, somando os valores das letras da palavra e armazenando em "key";
             letra = ((int)a[i]-97);
-            if (letras[letra]==0 && letra>-1){
+            if(letra<0){
+                letra+=32;
+            }
+            if (letras[letra]==0){
             key+=potencia(letra);                                  //pega o 2^n;               
             letras[letra]++;                        //marca a letra como utilizada; 
             }
@@ -271,7 +274,7 @@ int init(FILE *arquivo, arvore *arv){
         }
         //insere na árvore os valores;
         insert(arv,key,palavra);
-        confere_balanceamento(arv->raiz,&st,arv);
+        //confere_balanceamento(arv->raiz,&st,arv);
 
     }
     return 1;
@@ -284,13 +287,58 @@ int init(FILE *arquivo, arvore *arv){
 
 //parte interativa com o usuário
 int menu(){
-
+    short int x;
+    system ("cls");
+    printf("digite o numero da opcao desejada:\n");
+    printf("1-procurar palavras\n");
+    printf("2-sair\n");
+    scanf("%d",&x);
+    return x;
 }
 
 //parte do acesso aos valores da árvore
-int criarchave(){
+int criarchave(char *pesquisa){
+    int chave=0;
+    short int i=0,letras[26]={0},letra=0;
 
+    while(pesquisa[i]!='\0'){
+    letra=((int)pesquisa[i]-97);
+    if (letra<0){
+        letra+=32;
+    }
+    if (letras[letra]==0){
+        chave+=potencia(letra);
+        letras[letra]++;
+    }
+    i++;
+    }
+    return chave;
 }
-int listarpalavras(int key,arvore *arv){
-
+void listarpalavras(int key,arvore *arv){
+    noh *no=pegaraiz(arv);
+    lista *list;
+    while (no->chave!=key){
+        if(no->chave<key){
+            no=no->direita;
+        }
+        else{
+            no=no->esquerda;
+        }
+        if(no==NULL){
+            break;
+        }
+    }
+    if(no!=NULL){
+        list=no->lista;
+        printf("resultado:\n");
+        while (list!=NULL){
+            printf("%s\n",list->palavra);
+            list=list->proximo;
+        }
+    }
+    else{
+        printf("nenhuma palavra da estrutura possui essa combinacao de letras\n");
+    }
+    printf("digite 1 para voltar ao menu\n");
+    scanf("%d",&key);
 }

@@ -78,22 +78,92 @@ if (arv!=NULL)
 else
     return NULL;
 }
+noh *achapai(arvore *arv,noh *no){
+    noh *atual=arv->raiz,*pai=NULL;
+    while(atual!=no){
+        if(atual->chave>no->chave){
+            pai=atual;
+            atual=atual->esquerda;
+        }
+        else{
+            pai=atual;
+            atual=atual->direita;
+        }
+    }
+    return pai;
+}
+void Rdireita(noh *no,arvore *arv,noh *pai){
+    noh *filho=no->direita,*auxiliar=NULL;
+    if (filho->peso>0){              //simples esquerda
+    if(filho->esquerda!=NULL){
+            auxiliar=filho->esquerda;
+        }
+        filho->esquerda=no;
+        no->direita=auxiliar;
+        if (pai!=NULL){
+            if (pai->esquerda=no){
+                pai->direita=filho;
+            }
+            else{
+                pai->esquerda=filho;
+            }
+        }
+        else{
+            arv->raiz=filho;
+        }
+    }
 
-void rebalancear(noh *no){
-    printf("chave %d peso %d\n",no->chave,no->peso);
+    else{                            //dupla direita
+
+    }
+    
+}
+void Resquerda(noh *no,arvore *arv,noh *pai){
+    noh *filho=no->esquerda,*auxiliar=NULL;
+    if (filho->peso<0){             //simples direita
+        if(filho->direita!=NULL){
+            auxiliar=filho->direita;
+        }
+        filho->direita=no;
+        no->esquerda=auxiliar;
+        if (pai!=NULL){
+            if (pai->direita=no){
+                pai->direita=filho;
+            }
+            else{
+                pai->esquerda=filho;
+            }
+        }
+        else{
+            arv->raiz=filho;
+        }
+    }
+    
+    else{                       //dupla direita
+        
+    }
+}
+void rebalancear(noh *no,arvore *arv,noh *pai){
+    if (no->peso>1){
+        Rdireita(no,arv,pai);
+    }
+    else{
+        Resquerda(no,arv,pai);
+    }
 }
 
-int confere_balanceamento(noh *no,short int *st){
+int confere_balanceamento(noh *no,short int *st,arvore *arv){
     if(no != NULL){
     int altura[2];
-    altura[0]=confere_balanceamento(no->esquerda,st);
-    altura[1]=confere_balanceamento(no->direita,st);
+    altura[0]=confere_balanceamento(no->esquerda,st,arv);
+    altura[1]=confere_balanceamento(no->direita,st,arv);
     if(*st == 0){
     no->peso=altura[1]-altura[0];
         if (no->peso>1||no->peso<-1){
-            rebalancear(no);
+            noh *pai = achapai(arv,no);
+            rebalancear(no,arv,pai);
             printf("%d\n",*st);
-            *st++;
+            *st+=1;
         }
     }
     return (altura[0]>altura[1]) ? altura[0]+1:altura[1]+1;
@@ -180,7 +250,7 @@ int init(FILE *arquivo, arvore *arv){
         //insere na árvore os valores;
         insert(arv,key,palavra);
         printf("recomeco\n");
-        confere_balanceamento(arv->raiz,&st);
+        confere_balanceamento(arv->raiz,&st,arv);
     }
     return 1;
     }
@@ -200,4 +270,25 @@ int criarchave(){
 }
 int listarpalavras(int key,arvore *arv){
 
+}
+
+
+void emordem(noh *no){
+    if (no!=NULL){
+    emordem(no->esquerda);
+    printf("%d, %s\n",no->chave,no->lista->palavra);
+    emordem(no->direita);
+    }
+}
+
+int altura(noh *no){
+    if (no!=NULL){
+        int a[2];
+        a[0]=altura(no->direita);
+        a[1]=altura(no->esquerda);
+    return (a[1]>a[0]) ?  a[1]+1 : a[0]+1;
+    }
+    else{
+        return 0;
+    }
 }

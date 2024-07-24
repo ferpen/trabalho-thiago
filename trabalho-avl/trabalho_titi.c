@@ -11,6 +11,7 @@ int main (void){
         pesquisa[i]='\0';
         }
         x=menu();
+        printf("saiu do menu");
         if(x==1){
         system("cls");
         printf("digite a sua pesquisa:\n");
